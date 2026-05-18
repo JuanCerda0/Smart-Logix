@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,11 +32,11 @@ class ProductControllerTests {
     }
 
     @Test
-    @WithMockUser
     void shouldCreateAndListProducts() throws Exception {
         productRepository.deleteAll();
 
         mockMvc.perform(post("/products")
+                        .with(jwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -52,14 +52,14 @@ class ProductControllerTests {
                 .andExpect(jsonPath("$.sku").value("SKU-TEST-001"))
                 .andExpect(jsonPath("$.stock").value(12));
 
-        mockMvc.perform(get("/products"))
+        mockMvc.perform(get("/products")
+                        .with(jwt()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].sku").value("SKU-TEST-001"));
     }
 
     @Test
-    @WithMockUser
     void shouldUpdateProductStock() throws Exception {
         productRepository.deleteAll();
         Product product = productRepository.save(new Product(
@@ -71,6 +71,7 @@ class ProductControllerTests {
                 5));
 
         mockMvc.perform(patch("/products/{id}/stock", product.getId())
+                        .with(jwt())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {

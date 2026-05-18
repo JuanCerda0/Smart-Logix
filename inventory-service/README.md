@@ -34,20 +34,24 @@ mvnw.cmd test
 
 ## Security
 
-Product endpoints require HTTP Basic authentication.
+Product endpoints require JWT Bearer authentication.
 
-Default local credentials:
+The service validates HS256 JWT tokens using a shared secret. For local development, the default secret is:
 
 ```text
-username: inventory
-password: inventory123
+smartlogix-development-secret-key-change-me-2026
 ```
 
-These can be changed with environment variables:
+Override it with:
 
 ```text
-INVENTORY_SERVICE_USER
-INVENTORY_SERVICE_PASSWORD
+SMARTLOGIX_JWT_SECRET
+```
+
+The BFF should send requests to this service with:
+
+```http
+Authorization: Bearer <jwt>
 ```
 
 Public endpoints:
@@ -93,8 +97,7 @@ Run the container:
 
 ```bash
 docker run --rm -p 8081:8081 \
-  -e INVENTORY_SERVICE_USER=inventory \
-  -e INVENTORY_SERVICE_PASSWORD=inventory123 \
+  -e SMARTLOGIX_JWT_SECRET=smartlogix-development-secret-key-change-me-2026 \
   smartlogix-inventory-service
 ```
 
@@ -115,7 +118,7 @@ GET /products/{id}
 ```http
 POST /products
 Content-Type: application/json
-Authorization: Basic inventory inventory123
+Authorization: Bearer <jwt>
 
 {
   "sku": "SKU-001",
