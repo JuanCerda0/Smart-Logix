@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: smartlogix-postgres
+    environment:
+      POSTGRES_DB: smartlogix_inventory
+      POSTGRES_USER: smartlogix
+      POSTGRES_PASSWORD: smartlogix123
+    ports:
+      - "5432:5432"
+    volumes:
+      - smartlogix-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartlogix -d smartlogix_inventory"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  inventory-service:
+    build:
+      context: ./inventory-service
+    container_name: smartlogix-inventory-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SMARTLOGIX_DB_URL: jdbc:postgresql://postgres:5432/smartlogix_inventory
+      SMARTLOGIX_DB_USERNAME: smartlogix
+      SMARTLOGIX_DB_PASSWORD: smartlogix123
+      SMARTLOGIX_JWT_SECRET: smartlogix-development-secret-key-change-me-2026
+    ports:
+      - "8081:8081"
+
+  bff:
+    build:
+      context: ./BackendForFrontend
+    container_name: smartlogix-bff
+    depends_on:
+      - inventory-service
+    environment:
+      SMARTLOGIX_AUTH_USERNAME: admin
+      SMARTLOGIX_AUTH_PASSWORD: admin123
+      SMARTLOGIX_JWT_SECRET: smartlogix-development-secret-key-change-me-2026
+      INVENTORY_SERVICE_URL: http://inventory-service:8081
+    ports:
+      - "8080:8080"
+
+volumes:
+  smartlogix-postgres-data:
