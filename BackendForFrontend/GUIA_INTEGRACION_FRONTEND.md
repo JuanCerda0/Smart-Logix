@@ -18,12 +18,44 @@ Servicios locales por defecto:
 BFF:               http://localhost:8080
 Inventory service: http://localhost:8081
 Frontend:          http://localhost:5173
+PostgreSQL:        localhost:5432
 ```
 
 El frontend debe usar solo esta URL base:
 
 ```text
 http://localhost:8080
+```
+
+## Como Levantar El Backend Para Integrar Frontend
+
+Opcion recomendada: levantar todo el backend desde la raiz del repositorio backend:
+
+```bash
+cd Smart-Logix-Back
+docker compose up --build
+```
+
+Este comando levanta:
+
+```text
+PostgreSQL        localhost:5432
+inventory-service http://localhost:8081
+BackendForFrontend http://localhost:8080
+```
+
+Para el frontend, lo importante es que el BFF quede disponible en:
+
+```text
+http://localhost:8080
+```
+
+Los productos se guardan en PostgreSQL, por lo que no se pierden al reiniciar los servicios. El volumen de Docker se llama `smartlogix-postgres-data`.
+
+Si el backend ya esta levantado, el frontend puede ejecutarse normalmente en su propio proyecto:
+
+```bash
+npm run dev
 ```
 
 ## Flujo De Autenticacion
@@ -386,7 +418,7 @@ En esta etapa, el microservicio disponible es `inventory-service`.
 - manejar productos;
 - manejar stock;
 - validar datos de inventario;
-- guardar datos en base de datos;
+- guardar datos en PostgreSQL;
 - responder al BFF.
 
 El frontend no necesita saber donde esta corriendo `inventory-service`. Si esa URL cambia, solo se cambia la configuracion del BFF.
@@ -421,6 +453,8 @@ Frontend
 - El token se envia con `Authorization: Bearer <token>`.
 - Si una solicitud responde `401`, probablemente hay que volver al login.
 - El BFF permite CORS desde `http://localhost:5173` y `http://localhost:4173`.
+- El backend completo se puede levantar con `docker compose up --build` desde `Smart-Logix-Back`.
+- La base de datos local del backend es PostgreSQL. H2 se usa solo para tests del backend.
 - `signup` todavia no esta implementado.
 - Por ahora se usa un usuario de prueba configurable:
 
@@ -428,4 +462,3 @@ Frontend
 username: admin
 password: admin123
 ```
-

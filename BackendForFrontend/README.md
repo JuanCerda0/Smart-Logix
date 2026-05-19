@@ -87,6 +87,16 @@ The BFF forwards these calls to `inventory-service` using the same JWT.
 
 ## Docker
 
+Recommended option from the backend root:
+
+```bash
+docker compose up --build
+```
+
+This starts the BFF, `inventory-service`, and PostgreSQL together.
+
+Manual container build:
+
 Build the image:
 
 ```bash

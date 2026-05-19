@@ -4,6 +4,14 @@ Spring Boot microservice responsible for product and stock management.
 
 ## Run Locally
 
+By default, the service uses PostgreSQL. Start PostgreSQL with Docker Compose from the backend root:
+
+```bash
+docker compose up postgres
+```
+
+Then run the service:
+
 ```bash
 ./mvnw spring-boot:run
 ```
@@ -19,6 +27,20 @@ The service runs on:
 ```text
 http://localhost:8081
 ```
+
+## Database
+
+Default local PostgreSQL values:
+
+```text
+SMARTLOGIX_DB_URL=jdbc:postgresql://localhost:5432/smartlogix_inventory
+SMARTLOGIX_DB_USERNAME=smartlogix
+SMARTLOGIX_DB_PASSWORD=smartlogix123
+```
+
+When running with Docker Compose, these values are configured automatically.
+
+H2 is kept only for automated tests through the `test` Spring profile.
 
 ## Run Tests
 
@@ -61,22 +83,6 @@ GET /actuator/health
 GET /actuator/info
 ```
 
-## H2 Console
-
-The local in-memory database console is available at:
-
-```text
-http://localhost:8081/h2-console
-```
-
-Connection values:
-
-```text
-JDBC URL: jdbc:h2:mem:smartlogix_inventory
-User: sa
-Password:
-```
-
 ## Product API
 
 Base URL:
@@ -97,6 +103,9 @@ Run the container:
 
 ```bash
 docker run --rm -p 8081:8081 \
+  -e SMARTLOGIX_DB_URL=jdbc:postgresql://host.docker.internal:5432/smartlogix_inventory \
+  -e SMARTLOGIX_DB_USERNAME=smartlogix \
+  -e SMARTLOGIX_DB_PASSWORD=smartlogix123 \
   -e SMARTLOGIX_JWT_SECRET=smartlogix-development-secret-key-change-me-2026 \
   smartlogix-inventory-service
 ```

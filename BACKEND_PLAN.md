@@ -12,16 +12,16 @@ All backend components will live inside the same backend repository, separated b
 
 ```text
 Smart-Logix-Back/
-  smartlogix-bff/
+  BackendForFrontend/
   inventory-service/
-  docker-compose.yml        # optional later
+  docker-compose.yml
   README.md
   BACKEND_PLAN.md
 ```
 
 ## Initial Components
 
-### 1. smartlogix-bff
+### 1. BackendForFrontend
 
 The BFF is the public backend entry point for the frontend.
 
@@ -80,13 +80,13 @@ Backend:
 
 Database:
 
-- H2 for quick local development and testing.
-- PostgreSQL later when Docker Compose is added.
+- PostgreSQL for local development and Docker Compose execution.
+- H2 only for automated tests of `inventory-service`.
 
 Infrastructure:
 
 - Dockerfile per backend component.
-- Docker Compose later to run the BFF, inventory service, and database together.
+- Docker Compose to run the BFF, inventory service, and database together.
 
 Security:
 
@@ -106,7 +106,7 @@ The backend should use these patterns:
 
 ### Phase 1: Backend Base
 
-- Create `smartlogix-bff` Spring Boot project.
+- Create `BackendForFrontend` Spring Boot project.
 - Create `inventory-service` Spring Boot project.
 - Add basic configuration and health endpoints.
 - Add README instructions for running each service.
@@ -129,15 +129,15 @@ The backend should use these patterns:
 
 ### Phase 4: Docker
 
-- Add Dockerfile for `smartlogix-bff`.
+- Add Dockerfile for `BackendForFrontend`.
 - Add Dockerfile for `inventory-service`.
 - Verify each service can run as a container.
 
-### Phase 5: Optional Docker Compose
+### Phase 5: Docker Compose
 
 - Add `docker-compose.yml`.
 - Run BFF and inventory service together.
-- Add PostgreSQL if time allows.
+- Add PostgreSQL for persistent inventory data.
 
 ### Phase 6: Optional Extra Microservice
 
@@ -155,7 +155,7 @@ Potential responsibilities:
 The first complete backend milestone should be:
 
 - `inventory-service` has working product CRUD.
-- `smartlogix-bff` exposes `/api/products`.
+- `BackendForFrontend` exposes `/api/products`.
 - The frontend only calls the BFF.
 - Both backend components include Dockerfiles.
 - The repository includes clear run instructions.

@@ -48,4 +48,33 @@ El proyecto considera abordar:
 
 ## Estado del Proyecto
 
-En etapa inicial de definición y diseño.
+Backend implementado con:
+
+- Backend For Frontend en `BackendForFrontend`
+- Microservicio de inventario en `inventory-service`
+- PostgreSQL como base de datos local mediante Docker Compose
+- H2 solo para tests automatizados del microservicio de inventario
+
+---
+
+## Ejecutar Backend Completo
+
+Desde esta carpeta:
+
+```bash
+docker compose up --build
+```
+
+Esto levanta:
+
+- PostgreSQL en `localhost:5432`
+- `inventory-service` en `http://localhost:8081`
+- `BackendForFrontend` en `http://localhost:8080`
+
+El frontend debe consumir el BFF:
+
+```text
+http://localhost:8080
+```
+
+No debe consumir directamente `inventory-service`.
